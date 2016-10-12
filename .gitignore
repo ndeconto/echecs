@@ -1,0 +1,20 @@
+/bin/
+/obj/
+/png/
+/projet minimal/
+/sources au 01 05/
+/images/
+/polices/
+*.png
+*.bmp
+*.depend
+*.cbp
+*.exe
+*.layout
+*.out
+*.dll
+*.txt
+*.7z
+*.ttf
+*.db
+*.cpp
