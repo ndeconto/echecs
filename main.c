@@ -80,7 +80,7 @@ int main ( int argc, char** argv )
             if (is_in_liste(l_coup, temp, a_jouer)) {
 
                 prise = capture(ech, &a_jouer);
-                maj_hash_pos(&hash_dep, &a_jouer, ech);
+                maj_hash_pos(hash_dep, &a_jouer, ech);
                 jouer_coup(&a_jouer, ech, id_couleur);
                 ecrire_coup2(nom_png, a_jouer, numero_coup++, prise);
 

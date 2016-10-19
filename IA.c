@@ -164,9 +164,8 @@ Coup_IA meilleur_coup_avec_memoire(const Echiquier* ech,  int profondeur, Noeud*
     for (i = 0; arbre->liste_coups[i] != FIN_LISTE_COUPS; i++)
     {
 
-        ech2 = *ech;
-        hash_essai = hash_coup(liste + arbre->liste_coups[i], &ech2);
-        new_hash = hash_pos ^ hash_essai;
+        ech2 = *ech;        //attention cette ligne cache une affectation de 64 char (pour les plateaux)
+        new_hash = maj_hash_pos(hash_pos, liste + arbre->liste_coups[i], &ech2);
 
         if (is_in_hashtable(new_hash, profondeur, &(essai.score)) == 0)
         {

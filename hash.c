@@ -111,7 +111,7 @@ Int hash_coup(const Coup* coup, const Echiquier* ech)
     int b = index_hash(type_piece, INDEX(y1, x1), 0);
     Int h = HASH_ELEMENTAIRES[index_hash(type_piece, INDEX(y1, x1), 0)];
 
-    assert(h < 72057594037927936);
+    //assert (h < 9223372036854775808);
 
     int id = INDEX(y2, x2);
     h ^= HASH_ELEMENTAIRES[index_hash(type_piece, id, 1)];
@@ -225,10 +225,17 @@ void ajouter_hash(Int hash_pos, float score, unsigned char p)
 
 }
 
-void maj_hash_pos(Int* hash_pos, const Coup* coup, const Echiquier* ech)
+Int maj_hash_pos(Int hash_pos, const Coup* coup, const Echiquier* ech)
 {
-    //TODO il faut gerer les extras bits !!!!!
-    *hash_pos = *hash_pos ^ hash_coup(coup, ech);
+    hash_pos ^= hash_coup(coup, ech);
+    hash_pos ^= (Int) 1 << HASHBIT_TRAIT;
+
+    /*
+    les extras bits autres que le bit de trait, ie les bits de roque et de prise en passant
+    ne sont pas pris en compte
+    */
+
+    return hash_pos;
 }
 
 
