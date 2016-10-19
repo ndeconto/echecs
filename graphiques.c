@@ -203,7 +203,7 @@ void afficher_aide()
     rect.x = POS_ECHIQUIER_X;
     rect.y = POS_ECHIQUIER_Y + imgs.echiquier_blancs_en_bas->h + OFFSET_TEXTE;
     SDL_Surface* s = TTF_RenderText_Blended(imgs.police_png,
-                                           "Pour afficher les commandes possibles, appuyez sur A",
+                                           "Pour afficher les commandes possibles, appuyez sur Z",
                                            (SDL_Color) {255, 255, 255});
     SDL_BlitSurface(s, NULL, screen, &rect);
     SDL_UpdateRect(screen, rect.x, rect.y, rect.w, rect.h);
