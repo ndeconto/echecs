@@ -227,13 +227,14 @@ void jouer_coup(Coup* a_jouer, Echiquier* ech, char id_couleur)
 
 void ecrire_coup2(const char* pathname, Coup a_ecrire, int numero, char prise)
 {
+    //le coup doit concerner l'échiquier qui est à l'écran, ie celui retourné par get_echiquier
     FILE* fichier = fopen(pathname, "a");
-    ecrire_coup(fichier, a_ecrire, numero, prise);
+    ecrire_coup(fichier, a_ecrire, numero, prise, NULL);
     fclose(fichier);
 }
 
 
-void ecrire_coup(FILE* fichier, Coup a_ecrire, int numero, char prise)
+void ecrire_coup(FILE* fichier, Coup a_ecrire, int numero, char prise, Echiquier* ech_)
 /*
     il faut appeler cette fonction apres avoir joue le coup
 
@@ -244,11 +245,14 @@ void ecrire_coup(FILE* fichier, Coup a_ecrire, int numero, char prise)
     prise = 0 signifie que le coup joue ne prend pas de piece
     prise = PRISE_EN_PASSANT indique une prise en passant
     remarque : PRISE_EN_PASSANT != 0
+
+    ech_ est l'échiquier sur lequel le coup est joué
+    s'il s'agit de l'échiquier qui est à l'écran, mettre à NULL (ou utiliser get_echiquier())
 */
 {
     int pos, x1, x2, y1, y2, T;
     char sortie[30] = "", lignes[] = "87654321", colonnes[] = "abcdefgh", id, suffixe[5] = "", roque = 0;
-    Echiquier ech = *get_echiquier();
+    Echiquier ech = (ech_ == NULL ? *get_echiquier() : *ech_);
     Coup* l_coup;
 
 

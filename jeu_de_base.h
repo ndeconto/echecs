@@ -14,7 +14,7 @@ void init_jeu_de_base(void);
 void quit_jeu_de_base(void);
 
 void jouer_coup(Coup*, Echiquier*, char);
-void ecrire_coup(FILE*, Coup, int, char);
+void ecrire_coup(FILE*, Coup, int, char, Echiquier *);
 void ecrire_coup2(const char*, Coup, int, char);
 
 char** get_plateau(void);

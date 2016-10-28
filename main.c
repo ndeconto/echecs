@@ -139,7 +139,7 @@ int main ( int argc, char** argv )
 
 
             prise = capture(ech, &(trouve.coup));
-            maj_hash_pos(&hash_dep, &(trouve.coup), ech);
+            hash_dep = maj_hash_pos(hash_dep, &(trouve.coup), ech);
             jouer_coup(&(trouve.coup), ech, id_couleur);
             ecrire_coup2(nom_png, trouve.coup, numero_coup++, prise);
 

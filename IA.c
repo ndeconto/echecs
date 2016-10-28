@@ -405,9 +405,41 @@ Coup_IA meilleur_coup_profondeur_auto(const Echiquier* ech, char id_couleur, flo
 
 
     fprintf(stderr, "profondeur de calcul = %d soit %llu evaluations\t %d positions non recalculees\t", i - 1, NB_APPELS_HEURISTIQUES, COUPURES_HASH);
+    Echiquier ech_affichage = *ech;
+    afficher_PVS(&arbre, id_couleur == INDEX_BLANC ? 1 : 0, ech_affichage);
+
     liberer_arbre(&arbre);
 
     return test;
+
+
+}
+
+
+void afficher_PVS(Noeud* arbre, int num_1er_demi_coup, Echiquier ech)
+{
+    /*
+    affiche dans stdout la Principal Variation Search, ie la meilleure combinaison pour les 2 camps selon l'IA
+    num_1er_demi_coup doit être impair s'il s'agit d'un coup des blancs, pair s'il s'agit d'un coup des noirs
+    le numéro du demi coup est 2 fois ou 2 fois + 1 le numéro du coup
+    */
+
+    if (arbre->profondeur < 0)
+    {
+        fprintf(stdout, "\n\n");
+        return;
+    }
+
+    Coup* l_coup = malloc(sizeof(Coup) * NB_MAX_COUPS_POSSIBlES);
+    char id_couleur = (num_1er_demi_coup & 1 ? INDEX_BLANC : INDEX_NOIR);
+    int T = liste_coups_valides(&ech, id_couleur , l_coup);
+    Coup c = l_coup[arbre->liste_coups[0]];
+
+    jouer_coup(&c, &ech, id_couleur);
+    ecrire_coup(stdout, c, num_1er_demi_coup, 0, &ech); //on ne sait paas s'il y a prise, et on s'en moque ici
+    afficher_PVS(arbre->liste_fils + 0, num_1er_demi_coup + 1, ech);
+
+    free(l_coup);
 
 
 }

@@ -35,6 +35,8 @@ Coup_IA meilleur_coup_profondeur_auto(const Echiquier*, char, float, Int);
 float   heuristique(const Echiquier*, char);
 char    gain_perte(const char*, int, const char*, int, char);
 
+void afficher_PVS(Noeud*, int, Echiquier ech);
+
 
 #define ABS(a) ((a) > 0 ? (a) : -(a))
 
