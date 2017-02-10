@@ -39,6 +39,7 @@ struct Position
     Int v_hash;
     float score;
     unsigned char profondeur_analyse;
+    short id_meilleur_coup;
 };
 typedef struct Position Position;
 

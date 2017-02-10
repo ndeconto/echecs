@@ -143,7 +143,7 @@ void free_hash()
 }
 
 
-char is_in_hashtable(Int hash_pos, unsigned char p_min, float* score)
+char is_in_hashtable(Int hash_pos, unsigned char p_min, float* score, short* id_meilleur_coup)
 {
     /*
     renvoie 1 si la position de hash 'hash_pos' est trouvee dans la table de hashage avec une profondeur d'analyse superieure ou egale a 'p_min'
@@ -160,6 +160,8 @@ char is_in_hashtable(Int hash_pos, unsigned char p_min, float* score)
     {
         if (act->pos.v_hash == hash_pos)
         {
+            if (id_meilleur_coup != NULL) *id_meilleur_coup = act->pos.id_meilleur_coup;
+
             if (act->pos.profondeur_analyse >= p_min)
             {
                 *score = act->pos.score;
@@ -175,7 +177,7 @@ char is_in_hashtable(Int hash_pos, unsigned char p_min, float* score)
     return 0;
 }
 
-void ajouter_hash(Int hash_pos, float score, unsigned char p)
+void ajouter_hash(Int hash_pos, float score, unsigned char p, short id_meilleur_coup)
 {
     /*
         ajoute hash_pos dans la table de hash ; 'p' est la profondeur a laquelle la position a ete analysee
@@ -199,6 +201,7 @@ void ajouter_hash(Int hash_pos, float score, unsigned char p)
 
             act->pos.score   = score;
             act->pos.profondeur_analyse = p;
+            act->pos.id_meilleur_coup = id_meilleur_coup;
 
             if (act->pos.v_hash != hash_pos){
                 act->pos.v_hash  = hash_pos;
@@ -221,6 +224,7 @@ void ajouter_hash(Int hash_pos, float score, unsigned char p)
    act->pos.profondeur_analyse = p;
    act->pos.v_hash = hash_pos;
    act->suivant = TABLE_HASH[reste];
+   act->pos.id_meilleur_coup = id_meilleur_coup;
    TABLE_HASH[reste] = act;
 
 }

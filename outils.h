@@ -18,4 +18,6 @@ char allouer_noeud(Noeud*, int);
 void liberer_arbre(Noeud*);
 void tri_fusion(float*, int, Uint8*);
 
+void echanger(Coup*, int, int);
+
 #endif // OUTILS

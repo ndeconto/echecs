@@ -7,7 +7,12 @@ Uint8* MEMOIRE_TRI_2;
 
 Int ALEATOIRE;
 
-
+void echanger(Coup* tab, int i, int j)
+{
+    Coup temp = tab[i];
+    tab[i] = tab[j];
+    tab[j] = temp;
+}
 char init_outils()
 {
     MEMOIRE_TRI = malloc(sizeof(float) * (NB_MAX_COUPS_POSSIBlES + 1));

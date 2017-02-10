@@ -131,11 +131,25 @@ Coup_IA meilleur_coup(const Echiquier* ech, int profondeur, char id_couleur, flo
 }
 
 
-Coup_IA meilleur_coup_avec_memoire(const Echiquier* ech,  int profondeur, Noeud* arbre, char id_couleur, Int hash_pos, float best_blanc, float best_noir)
+Coup_IA meilleur_coup_avec_memoire(const Echiquier* ech,  int profondeur,
+                                   Noeud* arbre, char id_couleur, Int hash_pos,
+                                    float best_blanc, float best_noir,
+                                    short* id_meilleur_coup)
 {
+    /*
+    a l'appel, *id_meilleur_coup est l'indice dans la liste_coups _valides du
+    coup probablement le meilleur
+    noter que cela n'apporte aucune info supplementaire si arbre->liste_coup
+    a deja ete initialisee
+    mettre id_meilleur_coup = NULL  si aucune idee du meilleur coup avant appel
+    apres appel, id_meilleur_coup pointe sur l'indice dans liste_coups_valides
+    du coup renvoye
+
+    */
     Coup* liste = malloc(sizeof(Coup) * T_MAX_COUPS);
     int i, j, T;
-    float* l_score = malloc(sizeof(float) * T_MAX_COUPS), *score_connu;
+    float* l_score, *score_connu;
+    short id_meilleur_coup_fils;
     Noeud copie, *copie_liste_fils;
     Uint8 temp, *data_ref, *copie_coups;
     Coup_IA best, essai;
@@ -146,6 +160,7 @@ Coup_IA meilleur_coup_avec_memoire(const Echiquier* ech,  int profondeur, Noeud*
     best.id_couleur = id_couleur;
 
     T = liste_coups_valides(ech, id_couleur, liste); //memoriser la liste de coups dans l'arbre ?
+    l_score = malloc(sizeof(float) * T);
 
 
     if (T == PAT || T == MAT)
@@ -159,6 +174,24 @@ Coup_IA meilleur_coup_avec_memoire(const Echiquier* ech,  int profondeur, Noeud*
 
     if (arbre->profondeur < 0) {
         if (allouer_noeud(arbre, T) == FAILURE) profondeur = 0; //TODO gerer une explosion de la memoire mieux que ca !
+
+        if (id_meilleur_coup != NULL) {
+
+                if (*id_meilleur_coup < 0 || *id_meilleur_coup >= T)
+                {
+
+                    fprintf(stderr, "id_meilleur coup invalide : %d\n", *id_meilleur_coup);
+                    exit(1);
+                }
+
+                fprintf(stderr, "%d \t", *id_meilleur_coup);
+
+                //echanger(liste, (int) (*id_meilleur_coup), 0);
+                Uint8 temp = arbre->liste_coups[*id_meilleur_coup];
+                arbre->liste_coups[*id_meilleur_coup] = arbre->liste_coups[0];
+                arbre->liste_coups[0] = temp;
+                //nb : pas besoin d'echanger arbre->liste_fils car les elements ne sont pas encore initialises
+        }
     }
 
     for (i = 0; arbre->liste_coups[i] != FIN_LISTE_COUPS; i++)
@@ -166,15 +199,17 @@ Coup_IA meilleur_coup_avec_memoire(const Echiquier* ech,  int profondeur, Noeud*
 
         ech2 = *ech;        //attention cette ligne cache une affectation de 64 char (pour les plateaux)
         new_hash = maj_hash_pos(hash_pos, liste + arbre->liste_coups[i], &ech2);
+        id_meilleur_coup_fils = -1;
 
-        if (is_in_hashtable(new_hash, profondeur, &(essai.score)) == 0)
+        if (is_in_hashtable(new_hash, profondeur, &(essai.score), &id_meilleur_coup_fils) == 0)
         {
 
             jouer_coup(liste + arbre->liste_coups[i], &ech2, id_couleur);
 
             if (profondeur) {
                 //essai = meilleur_coup_avec_memoire(&ech2, profondeur - 1, arbre->liste_fils + i, i < arbre->profondeur ? NULL : &(arbre->profondeur), !id_couleur, best_blanc, best_noir);
-                essai = meilleur_coup_avec_memoire(&ech2, profondeur - 1, arbre->liste_fils + i, !id_couleur, new_hash, best_blanc, best_noir);
+                essai = meilleur_coup_avec_memoire(&ech2, profondeur - 1, arbre->liste_fils + i, !id_couleur, new_hash, best_blanc, best_noir,
+                                                   id_meilleur_coup_fils != -1 ? &id_meilleur_coup_fils : NULL);
                 essai.score = -essai.score;
 
                 //pour que les mats les plus courts aient un meilleur score que les mats longs
@@ -185,7 +220,7 @@ Coup_IA meilleur_coup_avec_memoire(const Echiquier* ech,  int profondeur, Noeud*
                 if (id_couleur == INDEX_NOIR) essai.score = -essai.score;
             }
 
-            ajouter_hash(new_hash, essai.score, profondeur);
+            ajouter_hash(new_hash, essai.score, profondeur, id_meilleur_coup_fils);
 
         }
         else {
@@ -236,6 +271,8 @@ Coup_IA meilleur_coup_avec_memoire(const Echiquier* ech,  int profondeur, Noeud*
         arbre->liste_coups[j] = copie_coups[data_ref[j]];
         if (profondeur) arbre->liste_fils[j] = copie_liste_fils[data_ref[j]];
     }
+
+    if(id_meilleur_coup != NULL) *id_meilleur_coup = arbre->liste_coups[0];
 
 
     /*for (i = 0; arbre->liste_coups[i] != FIN_LISTE_COUPS; i++) fprintf(stderr, "%d ", arbre->liste_coups[i]);
@@ -384,7 +421,7 @@ Coup_IA meilleur_coup_profondeur_auto(const Echiquier* ech, char id_couleur, flo
 
     t2 = clock();
     arbre.profondeur = -1;//allouer_noeud(&arbre, NB_MAX_COUPS_POSSIBlES);
-    test = meilleur_coup_avec_memoire(ech, 0, &arbre, id_couleur, hash_dep, -INFINI, -INFINI);
+    test = meilleur_coup_avec_memoire(ech, 0, &arbre, id_couleur, hash_dep, -INFINI, -INFINI, NULL);
     //test = meilleur_coup(ech, 0, id_couleur, -INFINI, -INFINI);
     t2 = clock() - t2;
 
@@ -392,7 +429,7 @@ Coup_IA meilleur_coup_profondeur_auto(const Echiquier* ech, char id_couleur, flo
     {
         t = clock();
         //on peut definir une PROFONDEUR_MAX_ARBRE
-        test = meilleur_coup_avec_memoire(ech, i, &arbre, id_couleur, hash_dep, -INFINI, -INFINI);
+        test = meilleur_coup_avec_memoire(ech, i, &arbre, id_couleur, hash_dep, -INFINI, -INFINI, NULL);
         //test = meilleur_coup(ech, i, id_couleur, -INFINI, -INFINI);
         t = clock() - t;
 

@@ -30,7 +30,7 @@ int  init_ia();
 void free_ia();
 
 Coup_IA meilleur_coup(const Echiquier*, int, char, float, float);
-Coup_IA meilleur_coup_avec_memoire(const Echiquier*, int, Noeud*, char, Int, float, float);
+Coup_IA meilleur_coup_avec_memoire(const Echiquier*, int, Noeud*, char, Int, float, float, short*);
 Coup_IA meilleur_coup_profondeur_auto(const Echiquier*, char, float, Int);
 float   heuristique(const Echiquier*, char);
 char    gain_perte(const char*, int, const char*, int, char);

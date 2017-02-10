@@ -8,8 +8,8 @@
 
 
 #define NB_EXTRA_BITS       1       //cf commentaire sur les hashbits plus bas
-#define TAILLE_TABLE_HASH   1048576 //2**20, TAILLE_TABLE_HASH = 2**NB_BITS_TABLE_HASH
-#define NB_BITS_TABLE_HASH  20
+#define TAILLE_TABLE_HASH   4194304 //2**22, TAILLE_TABLE_HASH = 2**NB_BITS_TABLE_HASH
+#define NB_BITS_TABLE_HASH  22      // ATTENTION : modifier les deux lignes en meme temps !!
 #define POSITIONS_PAR_RESTE 4
 
 
@@ -30,8 +30,8 @@ char init_hash();
 void free_hash();
 int index_hash(char, int, char);
 Int hash_coup(const Coup*, const Echiquier*);
-char is_in_hashtable(Int, unsigned char, float*);
-void ajouter_hash(Int, float, unsigned char);
+char is_in_hashtable(Int, unsigned char, float*, short*);
+void ajouter_hash(Int, float, unsigned char, short);
 Int maj_hash_pos(Int, const Coup*, const Echiquier*);
 Int hash_aleat();
 

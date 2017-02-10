@@ -133,7 +133,7 @@ int main ( int argc, char** argv )
             //fprintf(stderr, "evaluation heuristique = %.3f\n", -heuristique(get_echiquier(), id_couleur));
             t = clock();
             ech = get_echiquier();
-            trouve = meilleur_coup_profondeur_auto(ech, id_couleur, 1, hash_dep);
+            trouve = meilleur_coup_profondeur_auto(ech, id_couleur, 20, hash_dep);
             fprintf(stderr, "coup joue en %.2f\n", (clock() - t) / CLOCKS_PER_SEC);
             //fprintf(stderr, "score apres analyse = %.3f\n", trouve.score);
 
